@@ -81,10 +81,25 @@ resultado_estilo = """
 
 def predict(data):
     clf = joblib.load("forest_clf_grid_search.pkl")
-    tf_idf_vect = vect()
-    data_prepared = tf_idf_vect.transform(data)
 
-    return clf.predict(data_prepared)
+    return clf.predict(data)
+
+def clean_text(text):
+    # part 1
+    text = text.lower() # lowering text
+    text = REMOVE_SPECIAL_CHARACTER.sub('', text) # replace REPLACE_BY_SPACE symbols by space in text
+    text = BAD_SYMBOLS.sub('', text) # delete symbols which are in BAD_SYMBOLS from text
+    
+    # part 2
+    clean_text = []
+    for w in word_tokenize(text):
+        if w.lower() not in STOPWORDS:
+            pos = pos_tag([w])
+            new_w = lemmatizer.lemmatize(w, pos=get_simple_pos(pos[0][1]))
+            clean_text.append(new_w)
+    text = " ".join(clean_text)
+    
+    return text
 
 def vect():
 
@@ -94,9 +109,10 @@ def vect():
         for the_file in json_file:
             list_dic.append(json.loads(the_file))
 
-    len(list_dic)
+    print(len(list_dic))
 
     data = pd.DataFrame(list_dic)
+    print(data.shape)
 
     for i in range (0,209527):
         if(len(word_tokenize(data['short_description'][i])) == 0):
@@ -104,6 +120,7 @@ def vect():
     
     data = data.dropna()
     data=data.reset_index(drop=True)
+    print(data.shape)
 
     data['short_description'] = data['headline'] + '. ' + data['short_description']
     data = data.drop(['link', 'headline','authors', 'date'], axis=1)
@@ -128,11 +145,19 @@ def vect():
             data.drop(drop_i, axis=0, inplace=True)
             data=data.reset_index(drop=True)
 
+    print(data.shape)
+    print("cayendole al apply de clean_text")
+    data['short_description'] = data['short_description'].apply(clean_text)
+    X = data['short_description']
+
     tf_idf_vect = TfidfVectorizer(ngram_range =(1,1))
+    tf_idf_vect.fit(X)
+    Xprepared = tf_idf_vect.transform(X)
+    #print("IMPRIMIENDO VOCABULARY",tf_idf_vect.vocabulary_)
 
-    text = data['short_description'].apply(clean_text)
+    return tf_idf_vect
 
-    return tf_idf_vect.fit(text)
+
 
 def get_simple_pos(tag):
     if tag.startswith('J'):
@@ -146,38 +171,22 @@ def get_simple_pos(tag):
     else:
         return wordnet.NOUN
 
-def clean_text(text):
-    # part 1
-    text = text.lower() # lowering text
-    text = REMOVE_SPECIAL_CHARACTER.sub('', text) # replace REPLACE_BY_SPACE symbols by space in text
-    text = BAD_SYMBOLS.sub('', text) # delete symbols which are in BAD_SYMBOLS from text
-    
-    # part 2
-    clean_text = []
-    for w in word_tokenize(text):
-        if w.lower() not in STOPWORDS:
-            pos = pos_tag([w])
-            new_w = lemmatizer.lemmatize(w, pos=get_simple_pos(pos[0][1]))
-            clean_text.append(new_w)
-    text = " ".join(clean_text)
-    
-    return text
-
 
 # Botón para analizar el texto
 if st.button("Analizar texto"):
     # Cargar los datos
-    data =pd.DataFrame( {'new': [heading],'des': [texto]})
-
+    data = {'new': heading,'des': texto}
+    dataframe =pd.DataFrame( data, index=[0])
+    print("AQUI ESTA EL DATAFRAME:",dataframe)
     #features = pd.DataFrame(data, index=[0])
-
-    #data_prepared = full_pipeline.transform(features)
+    tf_idf_vect = vect()
+    data_prepared = tf_idf_vect.transform(data)
 
     #result = predict(data_prepared)
     #st.text(result[0])
 
 
-    resultado = predict(data)
+    resultado = predict(data_prepared)
     st.markdown(boton_estilo, unsafe_allow_html=True)
     st.markdown(resultado_estilo, unsafe_allow_html=True)
     st.markdown(f'<div style="background-color:#000000;padding: 10px;color: white;">{resultado[0]}', unsafe_allow_html=True)
