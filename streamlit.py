@@ -8,6 +8,7 @@ import json
 nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from string import punctuation
