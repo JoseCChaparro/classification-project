@@ -15,6 +15,6 @@ El proyecto consta de los siguientes archivos y carpetas:
 
 - **svc.pkl**: un archivo pickle que contiene el modelo SVC de aprendizaje automático entrenado.
 
-- **streamlit.py**: un archivo de Python con el código utilizado para el deploy del modelo.
+- **streamlit_intento.py**: un archivo de Python con el código utilizado para el deploy del modelo. El otro archivo de streamlit es la primer iteración del programa. Este es una versión optimizada
 
 - **README.md**: un archivo de texto que contiene información sobre el proyecto.
