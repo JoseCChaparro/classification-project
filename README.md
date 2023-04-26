@@ -3,7 +3,7 @@
 ### José Carlos Chaparro Morales - 329613
 ### Omar Alonso Escápita Chacón - 338886
 
-- [Enlace al deploy en Streamlit](https://josecchaparro-classification-project-streamlit-pn5l5p.streamlit.app/).
+- [Enlace al deploy en Streamlit](https://josecchaparro-classification-project-streamlit-intento-d6fg26.streamlit.app/).
 
 El proyecto consta de los siguientes archivos y carpetas:
 
