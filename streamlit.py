@@ -79,10 +79,7 @@ resultado_estilo = """
 #Tratar datos
 
 
-def predict(data):
-    clf = joblib.load("forest_clf_grid_search.pkl")
 
-    return clf.predict(data)
 
 def clean_text(text):
     # part 1
@@ -148,11 +145,11 @@ def vect():
     print(data.shape)
     print("cayendole al apply de clean_text")
     data['short_description'] = data['short_description'].apply(clean_text)
-    X = data['short_description']
+    PruebaX = data['short_description']
 
     tf_idf_vect = TfidfVectorizer(ngram_range =(1,1))
-    tf_idf_vect.fit(X)
-    Xprepared = tf_idf_vect.transform(X)
+    tf_idf_vect.fit(PruebaX)
+    Xprepared = tf_idf_vect.transform(PruebaX)
     #print("IMPRIMIENDO VOCABULARY",tf_idf_vect.vocabulary_)
 
     return tf_idf_vect
@@ -171,6 +168,9 @@ def get_simple_pos(tag):
     else:
         return wordnet.NOUN
 
+def predict(data):
+    clf = joblib.load("extra_tree_clf.pkl")
+    return clf.predict(data)
 
 # Botón para analizar el texto
 if st.button("Analizar texto"):
@@ -178,9 +178,14 @@ if st.button("Analizar texto"):
     data = {'new': heading,'des': texto}
     dataframe =pd.DataFrame( data, index=[0])
     print("AQUI ESTA EL DATAFRAME:",dataframe)
+    dataframe['des'] = dataframe['new'] + '. ' + dataframe['des']
+    dataframe.drop(['new'], axis=1)
+
+    dataframe = dataframe['des'].apply(clean_text)
+    
     #features = pd.DataFrame(data, index=[0])
     tf_idf_vect = vect()
-    data_prepared = tf_idf_vect.transform(data)
+    data_prepared = tf_idf_vect.transform(dataframe)
 
     #result = predict(data_prepared)
     #st.text(result[0])
