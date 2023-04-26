@@ -3,6 +3,8 @@
 ### José Carlos Chaparro Morales - 329613
 ### Omar Alonso Escápita Chacón - 338886
 
+Se desarrolló un modelo de clasificación de noticias utilizando SVC, Random Forest y Extra Trees, inicialmente al hacer el análisis de los datos se encontró que el dataset seleccionado estába muy desbalanceado, además de contener demasiadas clases. Para corregir un poco este defecto se optó por combinar las clases similares o repetidas, así como eliminar los valores nulos en el campo de la descripción y reducir cada categoría proporcionalmente. Una vez hecho estos cambios se encontró una mejora en los valores de las metricas pasando de alrededor de 0.2 en las primeras pruebas a 0.6 al final.
+
 - [Enlace al deploy en Streamlit](https://josecchaparro-classification-project-streamlit-intento-d6fg26.streamlit.app/).
 
 El proyecto consta de los siguientes archivos y carpetas:
